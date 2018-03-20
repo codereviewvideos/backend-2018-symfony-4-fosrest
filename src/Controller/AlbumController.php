@@ -39,23 +39,19 @@ class AlbumController extends FOSRestController implements ClassResourceInterfac
         );
 
         if (false === $form->isValid()) {
-            return $this->handleView(
-                $this->view(
-                    $form
-                )
+            return $this->view(
+                $form
             );
         }
 
         $this->entityManager->persist($form->getData());
         $this->entityManager->flush();
 
-        return $this->handleView(
-            $this->view(
-                [
-                    'status' => 'ok',
-                ],
-                Response::HTTP_CREATED
-            )
+        return $this->view(
+            [
+                'status' => 'ok',
+            ],
+            Response::HTTP_CREATED
         );
     }
 }
