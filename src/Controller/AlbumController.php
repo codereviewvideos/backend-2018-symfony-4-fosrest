@@ -77,6 +77,28 @@ class AlbumController extends FOSRestController implements ClassResourceInterfac
         );
     }
 
+    public function putAction(Request $request, string $id)
+    {
+        $existingAlbum = $this->findAlbumById($id);
+
+        $form = $this->createForm(AlbumType::class, $existingAlbum);
+
+        $form->submit(
+            $request->request->all()
+        );
+
+        if (false === $form->isValid()) {
+            return $this->view($form);
+        }
+
+        $this->entityManager->flush();
+
+        return $this->view(
+            null,
+            Response::HTTP_NO_CONTENT
+        );
+    }
+
     private function findAlbumById(string $id)
     {
         $album = $this->albumRepository->find($id);
