@@ -45,6 +45,13 @@ class AlbumController extends FOSRestController implements ClassResourceInterfac
         );
     }
 
+    public function cgetAction()
+    {
+        return $this->view(
+            $this->albumRepository->findAll()
+        );
+    }
+
     public function postAction(Request $request)
     {
         $form = $this->createForm(AlbumType::class, new Album());
