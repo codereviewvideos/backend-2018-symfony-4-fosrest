@@ -11,7 +11,6 @@ use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class AlbumController
@@ -24,10 +23,6 @@ class AlbumController extends FOSRestController implements ClassResourceInterfac
      * @var EntityManagerInterface
      */
     private $entityManager;
-    /**
-     * @var AlbumRepository
-     */
-    private $albumRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -40,17 +35,9 @@ class AlbumController extends FOSRestController implements ClassResourceInterfac
 
     public function getAction(string $id)
     {
-        return $this->view(
-            $this->findAlbumById($id)
-        );
+
     }
 
-    public function cgetAction()
-    {
-        return $this->view(
-            $this->albumRepository->findAll()
-        );
-    }
 
     public function postAction(Request $request)
     {
@@ -75,74 +62,5 @@ class AlbumController extends FOSRestController implements ClassResourceInterfac
             ],
             Response::HTTP_CREATED
         );
-    }
-
-    public function putAction(Request $request, string $id)
-    {
-        $existingAlbum = $this->findAlbumById($id);
-
-        $form = $this->createForm(AlbumType::class, $existingAlbum);
-
-        $form->submit(
-            $request->request->all()
-        );
-
-        if (false === $form->isValid()) {
-            return $this->view($form);
-        }
-
-        $this->entityManager->flush();
-
-        return $this->view(
-            null,
-            Response::HTTP_NO_CONTENT
-        );
-    }
-
-    public function patchAction(Request $request, string $id)
-    {
-        $existingAlbum = $this->findAlbumById($id);
-
-        $form = $this->createForm(AlbumType::class, $existingAlbum);
-
-        $form->submit(
-            $request->request->all(),
-            false
-        );
-
-        if (false === $form->isValid()) {
-            return $this->view($form);
-        }
-
-        $this->entityManager->flush();
-
-        return $this->view(
-            null,
-            Response::HTTP_NO_CONTENT
-        );
-    }
-
-    public function deleteAction(string $id)
-    {
-        $album = $this->findAlbumById($id);
-
-        $this->entityManager->remove($album);
-        $this->entityManager->flush();
-
-        return $this->view(
-            null,
-            Response::HTTP_NO_CONTENT
-        );
-    }
-
-    private function findAlbumById(string $id)
-    {
-        $album = $this->albumRepository->find($id);
-
-        if (null === $album) {
-            throw new NotFoundHttpException();
-        }
-
-        return $album;
     }
 }
